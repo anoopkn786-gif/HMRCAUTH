@@ -71,6 +71,18 @@
         console.log('Auth code:', code);
         console.log('Window opener:', window.opener);
 
+        try {
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(
+          { type: "oauthResponse", code, state },
+          "*" // you can replace "*" with your origin for better security
+        );
+        console.log("Message sent to parent window.");
+      }
+    } catch (err) {
+      console.error("Error posting message to opener:", err);
+    }
+
         // Broadcast the code so parent can receive it
         const channel = new BroadcastChannel('HMRCAUTHTOKEN');
         channel.postMessage(code);
@@ -92,3 +104,4 @@
   </script>
 </body>
 </html>
+
